@@ -4,6 +4,137 @@ import 'dart:io';
 import 'package:image/image.dart' as img;
 import 'package:path/path.dart' as p;
 
+class AppIconValidator {
+  static void run(List<File> files, String currentDir) {
+    print('🎨 \x1B[1m\x1B[33mVALIDATION ENGINE CHECK...\x1B[0m');
+    final errors = <String>[];
+    final warnings = <String>[];
+    final autoFixes = <String>[];
+
+    // 1. Duplicate check (case-insensitive)
+    final nameSet = <String>{};
+    for (final file in files) {
+      final base = p.basenameWithoutExtension(file.path).toLowerCase();
+      if (nameSet.contains(base)) {
+        errors.add('Duplicate app icon name collision found for "$base".');
+      }
+      nameSet.add(base);
+    }
+
+    // 2. Missing default check
+    final hasDefault = files.any((f) => p.basenameWithoutExtension(f.path).toLowerCase() == 'default');
+    if (!hasDefault) {
+      errors.add('Missing primary default icon "default.png" under assets/app_icons/.');
+    }
+
+    for (final file in files) {
+      final originalName = p.basenameWithoutExtension(file.path);
+      final sanitized = sanitize(originalName);
+
+      // 3. Filename format validity
+      if (originalName != sanitized) {
+        warnings.add('Filename "$originalName" is invalid for Android resources.');
+        autoFixes.add('Automatically rename "$originalName" to compliant component suffix "$sanitized" during compiles.');
+      }
+
+      // Check image metadata
+      final bytes = file.readAsBytesSync();
+      final image = img.decodeImage(bytes);
+      if (image == null) {
+        errors.add('Failed to decode PNG in "${p.basename(file.path)}".');
+        continue;
+      }
+
+      // 4. Dimensions check
+      if (image.width != 1024 || image.height != 1024) {
+        warnings.add('"${p.basename(file.path)}" is not 1024x1024 pixels (found ${image.width}x${image.height}).');
+        autoFixes.add('Automatically resize "${p.basename(file.path)}" to target 1024x1024 pixels in memory during compile.');
+      }
+
+      // 5. Transparency warning
+      if (hasTransparency(image)) {
+        warnings.add('"${p.basename(file.path)}" contains transparent pixels, which is unsupported on iOS alternate icons.');
+        autoFixes.add('Automatically blend transparency onto solid white canvas backgrounds for iOS alternate icons and legacy Android mipmaps.');
+      }
+    }
+
+    // 6. Manifest & Plist discrepancies
+    _checkBuildSyncErrors(files, currentDir, warnings, autoFixes);
+
+    // Print summary
+    if (warnings.isNotEmpty) {
+      print('\n⚠️  \x1B[33m\x1B[1mWarnings Found (${warnings.length}):\x1B[0m');
+      for (final w in warnings) {
+        print('  - $w');
+      }
+    }
+
+    if (autoFixes.isNotEmpty) {
+      print('\n🔧 \x1B[32m\x1B[1mSuggested Automatic Fixing Actions:\x1B[0m');
+      for (final f in autoFixes) {
+        print('  ✔ $f');
+      }
+    }
+
+    if (errors.isNotEmpty) {
+      print('\n❌ \x1B[31m\x1B[1mBlocking Errors Found (${errors.length}):\x1B[0m');
+      for (final e in errors) {
+        print('  - $e');
+      }
+      print('\x1B[35m' + '=' * 60 + '\x1B[0m');
+      exit(1);
+    } else {
+      print('\n✅ \x1B[32mStatic validation checks completed! Moving to generation.\x1B[0m');
+    }
+  }
+
+  static String sanitize(String name) {
+    var clean = name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9_]'), '_');
+    if (RegExp(r'^[0-9_]').hasMatch(clean)) {
+      clean = 'icon_$clean';
+    }
+    return clean;
+  }
+
+  static bool hasTransparency(img.Image imgObj) {
+    for (final pixel in imgObj) {
+      if (pixel.aNormalized < 1.0) return true;
+    }
+    return false;
+  }
+
+  static void _checkBuildSyncErrors(List<File> files, String currentDir, List<String> warnings, List<String> autoFixes) {
+    final cleanNamesSet = files.map((f) => sanitize(p.basenameWithoutExtension(f.path))).where((name) => name != 'default').toSet();
+
+    // Android Manifest sync check
+    final manifestFile = File(p.join(currentDir, 'android', 'app', 'src', 'main', 'AndroidManifest.xml'));
+    if (manifestFile.existsSync()) {
+      final content = manifestFile.readAsStringSync();
+      final aliasRegex = RegExp(r'<activity-alias[^>]*android:name="[^"]+\.MainActivity([^"]+)"');
+      final declaredAliasesSet = aliasRegex.allMatches(content).map((m) => m.group(1)!).toSet();
+
+      final missingInManifest = cleanNamesSet.difference(declaredAliasesSet);
+      final redundantInManifest = declaredAliasesSet.difference(cleanNamesSet);
+
+      if (missingInManifest.isNotEmpty || redundantInManifest.isNotEmpty) {
+        warnings.add('AndroidManifest.xml activity-alias declarations are out of sync with assets/app_icons/.');
+        autoFixes.add('Automatically inject matches and remove redundant lines in AndroidManifest.xml.');
+      }
+    }
+
+    // iOS Plist sync check
+    final plistFile = File(p.join(currentDir, 'ios', 'Runner', 'Info.plist'));
+    if (plistFile.existsSync()) {
+      final content = plistFile.readAsStringSync();
+      final legacyMatch = RegExp(r'<!--\s*dynamic_app_icon:inject:start\s*-->.*?<!--\s*dynamic_app_icon:inject:end\s*-->', dotAll: true);
+      if (!legacyMatch.hasMatch(content)) {
+        warnings.add('Info.plist dynamic_app_icon settings block is missing or corrupt.');
+        autoFixes.add('Automatically re-inject alternate icon blocks into Info.plist.');
+      }
+    }
+  }
+}
+
 void main(List<String> args) async {
   print('\x1B[35m' + '=' * 60 + '\x1B[0m');
   print('🤖 \x1B[1m\x1B[36mDYNAMIC APP ICON GENERATOR\x1B[0m');
@@ -35,45 +166,34 @@ void main(List<String> args) async {
     exit(1);
   }
 
-  print('🔍 Found ${files.length} icon candidate(s) to process.');
+  // Execute AppIconValidator checks before proceeding
+  AppIconValidator.run(files, currentDir);
 
-  // Validate images first
+  // Validate images first and map sanitized names
   final validNames = <String>[];
   final validImages = <String, img.Image>{};
 
   for (final file in files) {
-    final name = p.basenameWithoutExtension(file.path);
+    final originalName = p.basenameWithoutExtension(file.path);
+    final sanitizeName = AppIconValidator.sanitize(originalName);
+    
     final bytes = file.readAsBytesSync();
-    final image = img.decodeImage(bytes);
+    var image = img.decodeImage(bytes);
 
     if (image == null) {
-      print('⚠️  \x1B[33mWarning: Failed to decode image: ${p.basename(file.path)}. Skipping.\x1B[0m');
-      continue;
+      continue; // Handled by validator
     }
 
+    // Auto-fix resizing check
     if (image.width != 1024 || image.height != 1024) {
-      print('❌ \x1B[31mError: Alternate icon must be exactly 1024x1024 pixels (found ${image.width}x${image.height} in ${p.basename(file.path)})\x1B[0m');
-      exit(1);
+      image = img.copyResize(image, width: 1024, height: 1024);
     }
 
-    validNames.add(name);
-    validImages[name] = image;
-    print('✅ Validated $name (1024x1024)');
-  }
-
-  if (validNames.isEmpty) {
-    print('❌ \x1B[31mNo valid PNG images to process.\x1B[0m');
-    exit(1);
+    validNames.add(sanitizeName);
+    validImages[sanitizeName] = image;
   }
 
   // Helper methodologies for transparency, padding, and background blending
-  bool hasTransparency(img.Image imgObj) {
-    for (final pixel in imgObj) {
-      if (pixel.aNormalized < 1.0) return true;
-    }
-    return false;
-  }
-
   img.Image createPaddedForeground(img.Image src) {
     final size = src.width;
     final scaledSize = (size * 0.66).round();
@@ -144,8 +264,7 @@ void main(List<String> args) async {
       final name = entry.key;
       final source = entry.value;
 
-      final isTrans = hasTransparency(source);
-      print('  🔍 Analyzing $name: transparency detected = $isTrans');
+      final isTrans = AppIconValidator.hasTransparency(source);
 
       // Define adaptive layers
       img.Image foregroundLayer;
@@ -264,7 +383,7 @@ void main(List<String> args) async {
       if (name == 'default') continue; 
 
       // Blend transparency onto white (iOS alternate icons must be 100% opaque)
-      final iosOpaqueSrc = hasTransparency(source) ? blendOnWhiteBackground(source) : source;
+      final iosOpaqueSrc = AppIconValidator.hasTransparency(source) ? blendOnWhiteBackground(source) : source;
 
       // Render sizes: iPhone (@2x = 120, @3x = 180), iPad (@2x = 152, iPad pro = 167, @1x = 76)
       final sizes = {
