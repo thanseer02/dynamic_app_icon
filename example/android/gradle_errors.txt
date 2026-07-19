@@ -1,0 +1,48 @@
+> Task :gradle:compileJava NO-SOURCE
+> Task :gradle:compileGroovy UP-TO-DATE
+> Task :gradle:pluginDescriptors UP-TO-DATE
+> Task :gradle:processResources UP-TO-DATE
+> Task :gradle:classes UP-TO-DATE
+> Task :gradle:jar UP-TO-DATE
+WARNING:We recommend using a newer Android Gradle plugin to use compileSdk = 34
+
+This Android Gradle plugin (7.3.0) was tested up to compileSdk = 33
+
+This warning can be suppressed by adding
+    android.suppressUnsupportedCompileSdk=34
+to this project's gradle.properties
+
+The build will continue, but you are strongly encouraged to update your project to
+use a newer Android Gradle Plugin that has been tested with compileSdk = 34
+> Task :dynamic_app_icon:preBuild UP-TO-DATE
+> Task :dynamic_app_icon:preDebugBuild UP-TO-DATE
+> Task :dynamic_app_icon:compileDebugAidl NO-SOURCE
+> Task :dynamic_app_icon:compileDebugRenderscript NO-SOURCE
+> Task :dynamic_app_icon:generateDebugBuildConfig UP-TO-DATE
+> Task :dynamic_app_icon:generateDebugResValues UP-TO-DATE
+> Task :dynamic_app_icon:generateDebugResources UP-TO-DATE
+> Task :dynamic_app_icon:packageDebugResources UP-TO-DATE
+> Task :dynamic_app_icon:parseDebugLocalResources UP-TO-DATE
+> Task :dynamic_app_icon:processDebugManifest UP-TO-DATE
+> Task :dynamic_app_icon:generateDebugRFile UP-TO-DATE
+> Task :dynamic_app_icon:processDebugJavaRes NO-SOURCE
+> Task :dynamic_app_icon:javaPreCompileDebug UP-TO-DATE
+> Task :dynamic_app_icon:preDebugUnitTestBuild UP-TO-DATE
+> Task :dynamic_app_icon:generateDebugUnitTestStubRFile UP-TO-DATE
+> Task :dynamic_app_icon:javaPreCompileDebugUnitTest UP-TO-DATE
+> Task :dynamic_app_icon:processDebugUnitTestJavaRes NO-SOURCE
+> Task :dynamic_app_icon:compileDebugKotlin
+> Task :dynamic_app_icon:bundleLibResDebug UP-TO-DATE
+> Task :dynamic_app_icon:compileDebugJavaWithJavac UP-TO-DATE
+> Task :dynamic_app_icon:bundleLibRuntimeToJarDebug
+> Task :dynamic_app_icon:bundleLibCompileToJarDebug
+> Task :dynamic_app_icon:compileDebugUnitTestKotlin
+> Task :dynamic_app_icon:compileDebugUnitTestJavaWithJavac NO-SOURCE
+
+> Task :dynamic_app_icon:testDebugUnitTest
+Java HotSpot(TM) 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+
+DynamicAppIconPluginTest > onMethodCall_isSupported_returnsExpectedValue() PASSED
+
+BUILD SUCCESSFUL in 6s
+20 actionable tasks: 5 executed, 15 up-to-date

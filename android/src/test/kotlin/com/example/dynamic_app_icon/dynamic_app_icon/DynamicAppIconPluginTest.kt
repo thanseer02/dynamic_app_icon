@@ -9,6 +9,9 @@ internal class DynamicAppIconPluginTest {
   @Test
   fun onMethodCall_isSupported_returnsExpectedValue() {
     val plugin = DynamicAppIconPlugin()
+    val mockManager = Mockito.mock(IconManager::class.java)
+    Mockito.`when`(mockManager.isSupported()).thenReturn(true)
+    plugin.iconManager = mockManager
 
     val call = MethodCall("isSupported", null)
     val mockResult: MethodChannel.Result = Mockito.mock(MethodChannel.Result::class.java)
