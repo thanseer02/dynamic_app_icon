@@ -22,10 +22,27 @@ class DynamicAppIconPlugin: FlutterPlugin, MethodCallHandler {
   }
 
   override fun onMethodCall(call: MethodCall, result: Result) {
-    if (call.method == "getPlatformVersion") {
-      result.success("Android ${android.os.Build.VERSION.RELEASE}")
-    } else {
-      result.notImplemented()
+    when (call.method) {
+      "isSupported" -> {
+        // Stub implementation
+        result.success(true)
+      }
+      "setIcon" -> {
+        val iconName = call.argument<String>("iconName")
+        if (iconName == null) {
+          result.error("INVALID_ARGS", "Missing iconName", null)
+          return
+        }
+        // Stub implementation - just return success
+        result.success(null)
+      }
+      "getCurrentIcon" -> {
+        // Stub implementation - return default
+        result.success("default")
+      }
+      else -> {
+        result.notImplemented()
+      }
     }
   }
 

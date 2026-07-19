@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:dynamic_app_icon/dynamic_app_icon_method_channel.dart';
+import 'package:dynamic_app_icon/src/method_channel.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -12,7 +12,16 @@ void main() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
       channel,
       (MethodCall methodCall) async {
-        return '42';
+        switch (methodCall.method) {
+          case 'isSupported':
+            return true;
+          case 'setIcon':
+            return null;
+          case 'getCurrentIcon':
+            return 'dark_icon';
+          default:
+            return null;
+        }
       },
     );
   });
@@ -21,7 +30,15 @@ void main() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, null);
   });
 
-  test('getPlatformVersion', () async {
-    expect(await platform.getPlatformVersion(), '42');
+  test('isSupported returns correct status', () async {
+    expect(await platform.isSupported(), true);
+  });
+
+  test('setIcon invokes channel without error', () async {
+    expect(platform.setIcon(iconName: 'dark_icon'), completes);
+  });
+
+  test('getCurrentIcon returns active name', () async {
+    expect(await platform.getCurrentIcon(), 'dark_icon');
   });
 }

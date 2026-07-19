@@ -4,20 +4,16 @@ import XCTest
 
 @testable import dynamic_app_icon
 
-// This demonstrates a simple unit test of the Swift portion of this plugin's implementation.
-//
-// See https://developer.apple.com/documentation/xctest for more information about using XCTest.
-
 class RunnerTests: XCTestCase {
 
-  func testGetPlatformVersion() {
+  func testIsSupported() {
     let plugin = DynamicAppIconPlugin()
 
-    let call = FlutterMethodCall(methodName: "getPlatformVersion", arguments: [])
+    let call = FlutterMethodCall(methodName: "isSupported", arguments: [])
 
     let resultExpectation = expectation(description: "result block must be called.")
     plugin.handle(call) { result in
-      XCTAssertEqual(result as! String, "iOS " + UIDevice.current.systemVersion)
+      XCTAssertEqual(result as! Bool, true)
       resultExpectation.fulfill()
     }
     waitForExpectations(timeout: 1)

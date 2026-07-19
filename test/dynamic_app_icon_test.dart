@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dynamic_app_icon/dynamic_app_icon.dart';
-import 'package:dynamic_app_icon/dynamic_app_icon_platform_interface.dart';
-import 'package:dynamic_app_icon/dynamic_app_icon_method_channel.dart';
+import 'package:dynamic_app_icon/src/interface.dart';
+import 'package:dynamic_app_icon/src/method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 class MockDynamicAppIconPlatform
@@ -9,7 +9,13 @@ class MockDynamicAppIconPlatform
     implements DynamicAppIconPlatform {
 
   @override
-  Future<String?> getPlatformVersion() => Future.value('42');
+  Future<bool> isSupported() => Future.value(true);
+
+  @override
+  Future<void> setIcon({required String iconName}) => Future.value();
+
+  @override
+  Future<String?> getCurrentIcon() => Future.value('dark_icon');
 }
 
 void main() {
@@ -19,11 +25,24 @@ void main() {
     expect(initialPlatform, isInstanceOf<MethodChannelDynamicAppIcon>());
   });
 
-  test('getPlatformVersion', () async {
-    DynamicAppIcon dynamicAppIconPlugin = DynamicAppIcon();
+  test('isSupported calls platform signature', () async {
     MockDynamicAppIconPlatform fakePlatform = MockDynamicAppIconPlatform();
     DynamicAppIconPlatform.instance = fakePlatform;
 
-    expect(await dynamicAppIconPlugin.getPlatformVersion(), '42');
+    expect(await DynamicAppIcon.isSupported(), true);
+  });
+
+  test('setIcon calls platform signature', () async {
+    MockDynamicAppIconPlatform fakePlatform = MockDynamicAppIconPlatform();
+    DynamicAppIconPlatform.instance = fakePlatform;
+
+    expect(DynamicAppIcon.setIcon('dark_icon'), completes);
+  });
+
+  test('getCurrentIcon calls platform signature', () async {
+    MockDynamicAppIconPlatform fakePlatform = MockDynamicAppIconPlatform();
+    DynamicAppIconPlatform.instance = fakePlatform;
+
+    expect(await DynamicAppIcon.getCurrentIcon(), 'dark_icon');
   });
 }
