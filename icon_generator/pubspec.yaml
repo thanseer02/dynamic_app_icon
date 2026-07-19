@@ -1,0 +1,8 @@
+name: icon_generator
+description: A reusable Dart library engine for resizing launcher icons, generating adaptive XML configs, and performing transparency checks.
+version: 0.0.1
+environment:
+  sdk: '>=3.3.1 <4.0.0'
+dependencies:
+  image: ^4.0.0
+  path: ^1.8.0

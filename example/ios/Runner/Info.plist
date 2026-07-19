@@ -72,6 +72,8 @@
 	
 	
 	
+	
+	
 	<!-- dynamic_app_icon:inject:start -->
 	<key>CFBundleIcons</key>
 	<dict>

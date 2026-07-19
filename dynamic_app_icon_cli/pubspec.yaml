@@ -1,0 +1,13 @@
+name: dynamic_app_icon_cli
+description: Command-line interface executable script for dynamic_app_icon packages.
+version: 0.0.1
+environment:
+  sdk: '>=3.3.1 <4.0.0'
+dependencies:
+  args: ^2.4.0
+  path: ^1.8.0
+  icon_generator:
+    path: ../icon_generator
+# Expose executable dynamic_app_icon_cli:generate
+executables:
+  generate:

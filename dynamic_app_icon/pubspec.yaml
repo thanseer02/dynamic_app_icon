@@ -1,0 +1,27 @@
+name: dynamic_app_icon
+description: A production-ready Flutter plugin to dynamically switch the application launcher icon at runtime.
+version: 0.0.1
+homepage:
+
+environment:
+  sdk: '>=3.3.1 <4.0.0'
+  flutter: '>=3.3.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plugin_platform_interface: ^2.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.example.dynamic_app_icon.dynamic_app_icon
+        pluginClass: DynamicAppIconPlugin
+      ios:
+        pluginClass: DynamicAppIconPlugin

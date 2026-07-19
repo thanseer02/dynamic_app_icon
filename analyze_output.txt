@@ -1,8 +1,0 @@
-Analyzing dynamic_app_icon...                                   
-
-   info - Use interpolation to compose strings and values - bin\generate.dart:8:9 - prefer_interpolation_to_compose_strings
-   info - Use interpolation to compose strings and values - bin\generate.dart:10:9 - prefer_interpolation_to_compose_strings
-   info - Use interpolation to compose strings and values - bin\generate.dart:23:11 - prefer_interpolation_to_compose_strings
-   info - Don't invoke 'print' in production code - create_test_assets.dart:25:3 - avoid_print
-
-4 issues found. (ran in 2.3s)

@@ -67,6 +67,8 @@
             
             
             
+            
+            
             <!-- dynamic_app_icon:inject:start -->
         <activity-alias
             android:name=".MainActivitydark_icon"
