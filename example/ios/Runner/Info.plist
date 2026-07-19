@@ -69,5 +69,61 @@
 			</dict>
 		</dict>
 	</dict>
+	<!-- dynamic_app_icon:inject:start -->
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundleAlternateIcons</key>
+		<dict>
+			<key>dark_icon</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>dark_icon-2x</string>
+					<string>dark_icon-3x</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>festive_icon</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>festive_icon-2x</string>
+					<string>festive_icon-3x</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+		</dict>
+	</dict>
+	<key>CFBundleIcons~ipad</key>
+	<dict>
+		<key>CFBundleAlternateIcons</key>
+		<dict>
+			<key>dark_icon</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>dark_icon-ipad</string>
+					<string>dark_icon-ipad-2x</string>
+					<string>dark_icon-ipad-pro</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>festive_icon</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>festive_icon-ipad</string>
+					<string>festive_icon-ipad-2x</string>
+					<string>festive_icon-ipad-pro</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+		</dict>
+	</dict>
+	<!-- dynamic_app_icon:inject:end -->
 </dict>
 </plist>

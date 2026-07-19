@@ -63,6 +63,31 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+            
+            <!-- dynamic_app_icon:inject:start -->
+        <activity-alias
+            android:name=".MainActivitydark_icon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_dark_icon"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".MainActivityfestive_icon"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_festive_icon"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity-alias>
+        <!-- dynamic_app_icon:inject:end -->
     </application>
     <!-- Required to query activities that can process text -->
     <queries>
