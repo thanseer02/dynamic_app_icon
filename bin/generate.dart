@@ -51,14 +51,14 @@ void main(List<String> args) async {
       continue;
     }
 
-    if (image.width != image.height) {
-      print('❌ \x1B[31mError: Alternate icon must be square (found ${image.width}x${image.height} in ${p.basename(file.path)})\x1B[0m');
+    if (image.width != 1024 || image.height != 1024) {
+      print('❌ \x1B[31mError: Alternate icon must be exactly 1024x1024 pixels (found ${image.width}x${image.height} in ${p.basename(file.path)})\x1B[0m');
       exit(1);
     }
 
     validNames.add(name);
     validImages[name] = image;
-    print('✅ Validated $name (${image.width}x${image.height})');
+    print('✅ Validated $name (1024x1024)');
   }
 
   if (validNames.isEmpty) {
@@ -66,11 +66,71 @@ void main(List<String> args) async {
     exit(1);
   }
 
-  // 1. Generate Android Mipmaps
-  print('\n🤖 \x1B[1m\x1B[34m[Android] Generating Mipmaps...\x1B[0m');
+  // Helper methodologies for transparency, padding, and background blending
+  bool hasTransparency(img.Image imgObj) {
+    for (final pixel in imgObj) {
+      if (pixel.aNormalized < 1.0) return true;
+    }
+    return false;
+  }
+
+  img.Image createPaddedForeground(img.Image src) {
+    final size = src.width;
+    final scaledSize = (size * 0.66).round();
+    final scaled = img.copyResize(src, width: scaledSize, height: scaledSize);
+    
+    final canvas = img.Image(width: size, height: size, numChannels: 4);
+    for (final pixel in canvas) {
+      pixel.r = 0; pixel.g = 0; pixel.b = 0; pixel.a = 0;
+    }
+    
+    final offset = (size - scaledSize) ~/ 2;
+    for (int y = 0; y < scaled.height; y++) {
+      for (int x = 0; x < scaled.width; x++) {
+        canvas.setPixel(offset + x, offset + y, scaled.getPixel(x, y));
+      }
+    }
+    return canvas;
+  }
+
+  img.Image blendOnWhiteBackground(img.Image src) {
+    final canvas = img.Image(width: src.width, height: src.height, numChannels: 4);
+    for (final pixel in canvas) {
+      pixel.r = 255; pixel.g = 255; pixel.b = 255; pixel.a = 255;
+    }
+    
+    for (int y = 0; y < src.height; y++) {
+      for (int x = 0; x < src.width; x++) {
+        final srcPixel = src.getPixel(x, y);
+        final a = srcPixel.aNormalized;
+        if (a > 0.0) {
+          final dstPixel = canvas.getPixel(x, y);
+          if (a >= 1.0) {
+            canvas.setPixel(x, y, srcPixel);
+          } else {
+            dstPixel.r = (srcPixel.r * a + dstPixel.r * (1.0 - a)).round();
+            dstPixel.g = (srcPixel.g * a + dstPixel.g * (1.0 - a)).round();
+            dstPixel.b = (srcPixel.b * a + dstPixel.b * (1.0 - a)).round();
+          }
+        }
+      }
+    }
+    return canvas;
+  }
+
+  img.Image createSolidWhite(int size) {
+    final canvas = img.Image(width: size, height: size, numChannels: 4);
+    for (final pixel in canvas) {
+      pixel.r = 255; pixel.g = 255; pixel.b = 255; pixel.a = 255;
+    }
+    return canvas;
+  }
+
+  // 1. Generate Android Assets (Mipmaps & Adaptive Layers)
+  print('\n🤖 \x1B[1m\x1B[34m[Android] Generating Legacy and Adaptive Icons...\x1B[0m');
   final androidResDir = Directory(p.join(currentDir, 'android', 'app', 'src', 'main', 'res'));
   if (!androidResDir.existsSync()) {
-    print('⚠️  Android res directory not found at "${androidResDir.path}". Skipping Android mipmap generation.');
+    print('⚠️  Android res directory not found at "${androidResDir.path}". Skipping.');
   } else {
     final androidDensities = {
       'mipmap-mdpi': 48,
@@ -82,24 +142,66 @@ void main(List<String> args) async {
 
     for (final entry in validImages.entries) {
       final name = entry.key;
-      final image = entry.value;
+      final source = entry.value;
 
+      final isTrans = hasTransparency(source);
+      print('  🔍 Analyzing $name: transparency detected = $isTrans');
+
+      // Define adaptive layers
+      img.Image foregroundLayer;
+      img.Image backgroundLayer;
+      img.Image legacyLayer;
+
+      if (isTrans) {
+        foregroundLayer = source;
+        backgroundLayer = createSolidWhite(1024);
+        legacyLayer = blendOnWhiteBackground(source);
+      } else {
+        foregroundLayer = createPaddedForeground(source);
+        backgroundLayer = source;
+        legacyLayer = source;
+      }
+
+      // Write layered density PNG files
       for (final density in androidDensities.entries) {
         final densityFolder = Directory(p.join(androidResDir.path, density.key));
         if (!densityFolder.existsSync()) {
           densityFolder.createSync(recursive: true);
         }
-
         final size = density.value;
-        final resized = img.copyResize(image, width: size, height: size);
-        
-        final outPath = p.join(densityFolder.path, 'ic_launcher_$name.png');
-        File(outPath).writeAsBytesSync(img.encodePng(resized));
 
-        final outRoundPath = p.join(densityFolder.path, 'ic_launcher_${name}_round.png');
-        File(outRoundPath).writeAsBytesSync(img.encodePng(resized));
+        // Legacy & Round (must be fully opaque)
+        final resizedLegacy = img.copyResize(legacyLayer, width: size, height: size);
+        File(p.join(densityFolder.path, 'ic_launcher_$name.png'))
+            .writeAsBytesSync(img.encodePng(resizedLegacy));
+        File(p.join(densityFolder.path, 'ic_launcher_${name}_round.png'))
+            .writeAsBytesSync(img.encodePng(resizedLegacy));
+
+        // Adaptive Foreground
+        final resizedFore = img.copyResize(foregroundLayer, width: size, height: size);
+        File(p.join(densityFolder.path, 'ic_launcher_${name}_foreground.png'))
+            .writeAsBytesSync(img.encodePng(resizedFore));
+
+        // Adaptive Background
+        final resizedBack = img.copyResize(backgroundLayer, width: size, height: size);
+        File(p.join(densityFolder.path, 'ic_launcher_${name}_background.png'))
+            .writeAsBytesSync(img.encodePng(resizedBack));
       }
-      print('  🎉 Generated mipmaps for: $name (Android)');
+
+      // Write Adaptive Launcher XML configuration wrapper
+      final v26Folder = Directory(p.join(androidResDir.path, 'mipmap-anydpi-v26'));
+      if (!v26Folder.existsSync()) {
+        v26Folder.createSync(recursive: true);
+      }
+      final xmlWrapper = File(p.join(v26Folder.path, 'ic_launcher_$name.xml'));
+      xmlWrapper.writeAsStringSync('''<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@mipmap/ic_launcher_${name}_background"/>
+    <foreground android:drawable="@mipmap/ic_launcher_${name}_foreground"/>
+</adaptive-icon>
+''');
+
+      print('  🎉 Generated legacy, adaptive foreground/background, and XML drawables for: $name');
     }
   }
 
@@ -124,12 +226,12 @@ void main(List<String> args) async {
     final buffer = StringBuffer();
     buffer.writeln('        <!-- dynamic_app_icon:inject:start -->');
     for (final name in validNames) {
-      if (name == 'default') continue; // default is handled by primary activity/alias
+      if (name == 'default') continue; 
       buffer.writeln('        <activity-alias');
       buffer.writeln('            android:name="$mainActivityName$name"');
       buffer.writeln('            android:enabled="false"');
       buffer.writeln('            android:exported="true"');
-      buffer.writeln('            android:icon="@mipmap/ic_launcher_$name"');
+      buffer.writeln('            android:icon="@mipmap/ic_launcher_$name"'); // Links to the adaptive XML wrapper on API 26+
       buffer.writeln('            android:targetActivity="$mainActivityName">');
       buffer.writeln('            <intent-filter>');
       buffer.writeln('                <action android:name="android.intent.action.MAIN"/>');
@@ -139,7 +241,6 @@ void main(List<String> args) async {
     }
     buffer.write('        <!-- dynamic_app_icon:inject:end -->');
 
-    // In most Flutter apps, we inject right before </application>
     final closingAppIndex = manifestContent.indexOf('</application>');
     if (closingAppIndex == -1) {
       print('❌ FAILED: Closing </application> tag not found in AndroidManifest.xml');
@@ -150,20 +251,22 @@ void main(List<String> args) async {
     }
   }
 
-  // 3. Generate iOS alternate icons in Runner
+  // 3. Generate iOS alternate icons in Runner (Blend transparency onto solid white)
   print('\n🍏 \x1B[1m\x1B[32m[iOS] Generating Alternate Icons...\x1B[0m');
   final iosRunnerDir = Directory(p.join(currentDir, 'ios', 'Runner'));
   if (!iosRunnerDir.existsSync()) {
     print('⚠️  iOS Runner directory not found. Skipping.');
   } else {
-    // Write alternate icons into Runner folder so they are included in Bundle
     for (final entry in validImages.entries) {
       final name = entry.key;
-      final image = entry.value;
+      final source = entry.value;
 
       if (name == 'default') continue; 
 
-      // Render sizes: iPhone (@2x = 120, @3x = 180), iPad (@2x = 152, iPad pro = 167)
+      // Blend transparency onto white (iOS alternate icons must be 100% opaque)
+      final iosOpaqueSrc = hasTransparency(source) ? blendOnWhiteBackground(source) : source;
+
+      // Render sizes: iPhone (@2x = 120, @3x = 180), iPad (@2x = 152, iPad pro = 167, @1x = 76)
       final sizes = {
         '-2x.png': 120,
         '-3x.png': 180,
@@ -176,7 +279,7 @@ void main(List<String> args) async {
         final densityName = sizeEntry.key;
         final dimension = sizeEntry.value;
 
-        final resized = img.copyResize(image, width: dimension, height: dimension);
+        final resized = img.copyResize(iosOpaqueSrc, width: dimension, height: dimension);
         final outPath = p.join(iosRunnerDir.path, '$name$densityName');
         File(outPath).writeAsBytesSync(img.encodePng(resized));
       }
@@ -193,8 +296,12 @@ void main(List<String> args) async {
     var plistContent = plistFile.readAsStringSync();
 
     // Remove any previous dynamic injections
-    final injectRegex = RegExp(r'<!--\s*dynamic_app_icon:inject:start\s*-->.*?<!--\s*dynamic_app_icon:inject:end\s*-->', dotAll: true);
+    final injectRegex = RegExp(r'<!--\s*dynamic_app_icon:inject\s*-->.*?<!--\s*dynamic_app_icon:inject:end\s*-->', dotAll: true);
     plistContent = plistContent.replaceAll(injectRegex, '');
+
+    // Backup regex to clean legacy format
+    final legacyRegex = RegExp(r'<!--\s*dynamic_app_icon:inject:start\s*-->.*?<!--\s*dynamic_app_icon:inject:end\s*-->', dotAll: true);
+    plistContent = plistContent.replaceAll(legacyRegex, '');
 
     final alternateNames = validNames.where((n) => n != 'default').toList();
 
@@ -239,7 +346,6 @@ void main(List<String> args) async {
     buffer.writeln('	</dict>');
     buffer.write('	<!-- dynamic_app_icon:inject:end -->');
 
-    // In iOS Info.plist, we can inject right before the closing </dict></plist> tag
     final match = RegExp(r'</dict>\s*</plist>').allMatches(plistContent);
     final closingPlistIndex = match.isNotEmpty ? match.last.start : -1;
     if (closingPlistIndex == -1) {
