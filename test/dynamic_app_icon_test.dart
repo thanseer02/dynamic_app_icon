@@ -12,10 +12,16 @@ class MockDynamicAppIconPlatform
   Future<bool> isSupported() => Future.value(true);
 
   @override
-  Future<void> setIcon({required String iconName}) => Future.value();
+  Future<void> change({required String iconName}) => Future.value();
 
   @override
-  Future<String?> getCurrentIcon() => Future.value('dark_icon');
+  Future<void> reset() => Future.value();
+
+  @override
+  Future<String?> current() => Future.value('dark_icon');
+
+  @override
+  Future<List<String>> availableIcons() => Future.value(['default', 'dark_icon', 'festive_icon']);
 }
 
 void main() {
@@ -32,17 +38,31 @@ void main() {
     expect(await DynamicAppIcon.isSupported(), true);
   });
 
-  test('setIcon calls platform signature', () async {
+  test('change calls platform signature', () async {
     MockDynamicAppIconPlatform fakePlatform = MockDynamicAppIconPlatform();
     DynamicAppIconPlatform.instance = fakePlatform;
 
-    expect(DynamicAppIcon.setIcon('dark_icon'), completes);
+    expect(DynamicAppIcon.change('dark_icon'), completes);
   });
 
-  test('getCurrentIcon calls platform signature', () async {
+  test('reset calls platform signature', () async {
     MockDynamicAppIconPlatform fakePlatform = MockDynamicAppIconPlatform();
     DynamicAppIconPlatform.instance = fakePlatform;
 
-    expect(await DynamicAppIcon.getCurrentIcon(), 'dark_icon');
+    expect(DynamicAppIcon.reset(), completes);
+  });
+
+  test('current calls platform signature', () async {
+    MockDynamicAppIconPlatform fakePlatform = MockDynamicAppIconPlatform();
+    DynamicAppIconPlatform.instance = fakePlatform;
+
+    expect(await DynamicAppIcon.current(), 'dark_icon');
+  });
+
+  test('availableIcons calls platform signature', () async {
+    MockDynamicAppIconPlatform fakePlatform = MockDynamicAppIconPlatform();
+    DynamicAppIconPlatform.instance = fakePlatform;
+
+    expect(await DynamicAppIcon.availableIcons(), ['default', 'dark_icon', 'festive_icon']);
   });
 }

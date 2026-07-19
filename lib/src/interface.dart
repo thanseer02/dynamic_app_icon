@@ -23,22 +23,30 @@ abstract class DynamicAppIconPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  /// Checks if alternating app icons is supported on the current device.
+  /// Checks if dynamic icons are supported on the current device.
   Future<bool> isSupported() {
     throw UnimplementedError('isSupported() has not been implemented.');
   }
 
-  /// Sets the application app icon.
-  ///
-  /// Set [iconName] to `default` or `null` to revert to the primary app icon.
-  Future<void> setIcon({required String iconName}) {
-    throw UnimplementedError('setIcon() has not been implemented.');
+  /// Changes the application app icon.
+  Future<void> change({required String iconName}) {
+    throw UnimplementedError('change() has not been implemented.');
   }
 
-  /// Gets the current alternate app icon name.
+  /// Resets the application launcher icon back to its primary default icon.
+  Future<void> reset() {
+    throw UnimplementedError('reset() has not been implemented.');
+  }
+
+  /// Gets the currently active alternate icon name.
   ///
-  /// Returns `default` if the main/primary icon is used.
-  Future<String?> getCurrentIcon() {
-    throw UnimplementedError('getCurrentIcon() has not been implemented.');
+  /// Returns `null` if the default primary icon is active.
+  Future<String?> current() {
+    throw UnimplementedError('current() has not been implemented.');
+  }
+
+  /// Retrieves a list of alternate icon names configured in the application.
+  Future<List<String>> availableIcons() {
+    throw UnimplementedError('availableIcons() has not been implemented.');
   }
 }

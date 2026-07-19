@@ -15,10 +15,14 @@ void main() {
         switch (methodCall.method) {
           case 'isSupported':
             return true;
-          case 'setIcon':
+          case 'changeIcon':
             return null;
-          case 'getCurrentIcon':
+          case 'resetIcon':
+            return null;
+          case 'currentIcon':
             return 'dark_icon';
+          case 'availableIcons':
+            return ['default', 'dark_icon', 'festive_icon'];
           default:
             return null;
         }
@@ -34,11 +38,19 @@ void main() {
     expect(await platform.isSupported(), true);
   });
 
-  test('setIcon invokes channel without error', () async {
-    expect(platform.setIcon(iconName: 'dark_icon'), completes);
+  test('changeIcon invokes channel correctly', () async {
+    expect(platform.change(iconName: 'dark_icon'), completes);
   });
 
-  test('getCurrentIcon returns active name', () async {
-    expect(await platform.getCurrentIcon(), 'dark_icon');
+  test('resetIcon invokes channel correctly', () async {
+    expect(platform.reset(), completes);
+  });
+
+  test('currentIcon returns correct status', () async {
+    expect(await platform.current(), 'dark_icon');
+  });
+
+  test('availableIcons returns list of configured icons', () async {
+    expect(await platform.availableIcons(), ['default', 'dark_icon', 'festive_icon']);
   });
 }

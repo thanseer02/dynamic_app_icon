@@ -15,6 +15,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool _isSupported = false;
   String _currentIcon = 'default';
+  List<String> _availableIcons = [];
 
   @override
   void initState() {
@@ -25,9 +26,11 @@ class _MyAppState extends State<MyApp> {
   Future<void> _checkPluginState() async {
     final isSupported = await DynamicAppIcon.isSupported();
     String currentIcon = 'default';
+    List<String> availableIcons = [];
     if (isSupported) {
-      final activeIcon = await DynamicAppIcon.getCurrentIcon();
+      final activeIcon = await DynamicAppIcon.current();
       currentIcon = activeIcon ?? 'default';
+      availableIcons = await DynamicAppIcon.availableIcons();
     }
 
     if (!mounted) return;
@@ -35,13 +38,14 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _isSupported = isSupported;
       _currentIcon = currentIcon;
+      _availableIcons = availableIcons;
     });
   }
 
-  Future<void> _changeIcon(String? iconName) async {
+  Future<void> _changeIcon(String iconName) async {
     try {
-      await DynamicAppIcon.setIcon(iconName);
-      final activeIcon = await DynamicAppIcon.getCurrentIcon();
+      await DynamicAppIcon.change(iconName);
+      final activeIcon = await DynamicAppIcon.current();
       setState(() {
         _currentIcon = activeIcon ?? 'default';
       });
@@ -54,6 +58,27 @@ class _MyAppState extends State<MyApp> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error changing icon: ${e.message}')),
+        );
+      }
+    }
+  }
+
+  Future<void> _resetIcon() async {
+    try {
+      await DynamicAppIcon.reset();
+      final activeIcon = await DynamicAppIcon.current();
+      setState(() {
+        _currentIcon = activeIcon ?? 'default';
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Successfully reset launcher icon')),
+        );
+      }
+    } on DynamicAppIconException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error resetting icon: ${e.message}')),
         );
       }
     }
@@ -82,15 +107,25 @@ class _MyAppState extends State<MyApp> {
                   'Current Active Icon: $_currentIcon',
                   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 10),
+                Text(
+                  'Available Alternate Icons: ${_availableIcons.join(", ")}',
+                  style: const TextStyle(fontSize: 14),
+                ),
+                const SizedBox(height: 35),
                 ElevatedButton(
-                  onPressed: _isSupported ? () => _changeIcon(null) : null,
-                  child: const Text('Set Default Icon'),
+                  onPressed: _isSupported ? _resetIcon : null,
+                  child: const Text('Reset Default Icon'),
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: _isSupported ? () => _changeIcon('dark_icon') : null,
                   child: const Text('Set Dark Icon'),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: _isSupported ? () => _changeIcon('festive_icon') : null,
+                  child: const Text('Set Festive Icon'),
                 ),
               ],
             ),

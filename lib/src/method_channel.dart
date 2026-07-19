@@ -15,15 +15,27 @@ class MethodChannelDynamicAppIcon extends DynamicAppIconPlatform {
   }
 
   @override
-  Future<void> setIcon({required String iconName}) async {
-    await methodChannel.invokeMethod<void>('setIcon', {
+  Future<void> change({required String iconName}) async {
+    await methodChannel.invokeMethod<void>('changeIcon', {
       'iconName': iconName,
     });
   }
 
   @override
-  Future<String?> getCurrentIcon() async {
-    final name = await methodChannel.invokeMethod<String>('getCurrentIcon');
-    return name;
+  Future<void> reset() async {
+    await methodChannel.invokeMethod<void>('resetIcon');
+  }
+
+  @override
+  Future<String?> current() async {
+    final active = await methodChannel.invokeMethod<String>('currentIcon');
+    return active;
+  }
+
+  @override
+  Future<List<String>> availableIcons() async {
+    final icons = await methodChannel.invokeMethod<List<dynamic>>('availableIcons');
+    if (icons == null) return const [];
+    return icons.cast<String>();
   }
 }

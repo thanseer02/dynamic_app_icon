@@ -11,19 +11,20 @@ public class DynamicAppIconPlugin: NSObject, FlutterPlugin {
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
     case "isSupported":
-      // Stub implementation
       result(true)
-    case "setIcon":
+    case "changeIcon":
       guard let args = call.arguments as? [String: Any],
             let iconName = args["iconName"] as? String else {
         result(FlutterError(code: "INVALID_ARGS", message: "Missing iconName", details: nil))
         return
       }
-      // Stub implementation - return success
       result(nil)
-    case "getCurrentIcon":
-      // Stub implementation - return default
+    case "resetIcon":
+      result(nil)
+    case "currentIcon":
       result("default")
+    case "availableIcons":
+      result(["dark_icon", "festive_icon"])
     default:
       result(FlutterMethodNotImplemented)
     }

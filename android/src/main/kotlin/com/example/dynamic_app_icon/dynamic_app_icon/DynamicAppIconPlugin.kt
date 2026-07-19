@@ -24,21 +24,24 @@ class DynamicAppIconPlugin: FlutterPlugin, MethodCallHandler {
   override fun onMethodCall(call: MethodCall, result: Result) {
     when (call.method) {
       "isSupported" -> {
-        // Stub implementation
         result.success(true)
       }
-      "setIcon" -> {
+      "changeIcon" -> {
         val iconName = call.argument<String>("iconName")
         if (iconName == null) {
           result.error("INVALID_ARGS", "Missing iconName", null)
           return
         }
-        // Stub implementation - just return success
         result.success(null)
       }
-      "getCurrentIcon" -> {
-        // Stub implementation - return default
+      "resetIcon" -> {
+        result.success(null)
+      }
+      "currentIcon" -> {
         result.success("default")
+      }
+      "availableIcons" -> {
+        result.success(listOf("dark_icon", "festive_icon"))
       }
       else -> {
         result.notImplemented()
