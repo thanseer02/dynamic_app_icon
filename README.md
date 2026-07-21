@@ -185,6 +185,31 @@ try {
 
 ---
 
+## Example Application 📱
+
+The `dynamic_app_icon` package includes a fully functional Example Application to demonstrate dynamic launcher icon switching in action. It is intentionally simple so you can quickly understand how to integrate the package into your own projects.
+
+### Bundled Icons 🎨
+The example app comes pre-configured with six beautiful predefined launcher icons:
+- Default (Flutter Original)
+- Cat 🐱
+- Dog 🐶
+- Fox 🦊
+- Panda 🐼
+- Rocket 🚀
+
+All launcher icons are bundled with the application and switched entirely at runtime. Under the hood, this works seamlessly by leveraging native Android `<activity-alias>` configurations and iOS `CFBundleAlternateIcons`.
+
+### Interactive Demo 🛠️
+- **Select an Icon**: Tap any icon in the grid to select it.
+- **Apply Icon**: Pressing the "Apply Icon" button changes the device's launcher icon to your selection.
+- **Reset to Default**: Instantly restores the original fallback application icon.
+- **Random Icon**: Randomly selects and applies one of the predefined alternate icons.
+
+> **💡 Pro Tip:** The example app is just a playground! We encourage you to replace these demo animal icons with your own gorgeous branding and custom artwork when building your app! ✨
+
+---
+
 ## Best Practices
 
 - **Avoid frequent switches**: Constantly switching launcher icons can trigger platform rate limits, particularly on iOS. Limit switching to actions like theme changes or achievements.

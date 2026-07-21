@@ -49,86 +49,33 @@
 	<dict>
 		<key>CFBundleAlternateIcons</key>
 		<dict>
-			<key>dark_icon</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>dark_icon</string>
-				</array>
-				<key>UIPrerenderedIcon</key>
-				<false/>
-			</dict>
-			<key>festive_icon</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>festive_icon</string>
-				</array>
-				<key>UIPrerenderedIcon</key>
-				<false/>
-			</dict>
-		</dict>
-	</dict>
-	
-	
-	
-	
-	
-	<!-- dynamic_app_icon:inject:start -->
-	<key>CFBundleIcons</key>
-	<dict>
-		<key>CFBundleAlternateIcons</key>
-		<dict>
-			<key>dark_icon</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>dark_icon-2x</string>
-					<string>dark_icon-3x</string>
-				</array>
-				<key>UIPrerenderedIcon</key>
-				<false/>
-			</dict>
-			<key>festive_icon</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>festive_icon-2x</string>
-					<string>festive_icon-3x</string>
-				</array>
-				<key>UIPrerenderedIcon</key>
-				<false/>
-			</dict>
+			<key>cat</key>
+			<dict><key>CFBundleIconFiles</key><array><string>cat</string></array><key>UIPrerenderedIcon</key><false/></dict>
+			<key>dog</key>
+			<dict><key>CFBundleIconFiles</key><array><string>dog</string></array><key>UIPrerenderedIcon</key><false/></dict>
+			<key>fox</key>
+			<dict><key>CFBundleIconFiles</key><array><string>fox</string></array><key>UIPrerenderedIcon</key><false/></dict>
+			<key>panda</key>
+			<dict><key>CFBundleIconFiles</key><array><string>panda</string></array><key>UIPrerenderedIcon</key><false/></dict>
+			<key>rocket</key>
+			<dict><key>CFBundleIconFiles</key><array><string>rocket</string></array><key>UIPrerenderedIcon</key><false/></dict>
 		</dict>
 	</dict>
 	<key>CFBundleIcons~ipad</key>
 	<dict>
 		<key>CFBundleAlternateIcons</key>
 		<dict>
-			<key>dark_icon</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>dark_icon-ipad</string>
-					<string>dark_icon-ipad-2x</string>
-					<string>dark_icon-ipad-pro</string>
-				</array>
-				<key>UIPrerenderedIcon</key>
-				<false/>
-			</dict>
-			<key>festive_icon</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>festive_icon-ipad</string>
-					<string>festive_icon-ipad-2x</string>
-					<string>festive_icon-ipad-pro</string>
-				</array>
-				<key>UIPrerenderedIcon</key>
-				<false/>
-			</dict>
+			<key>cat</key>
+			<dict><key>CFBundleIconFiles</key><array><string>cat</string></array><key>UIPrerenderedIcon</key><false/></dict>
+			<key>dog</key>
+			<dict><key>CFBundleIconFiles</key><array><string>dog</string></array><key>UIPrerenderedIcon</key><false/></dict>
+			<key>fox</key>
+			<dict><key>CFBundleIconFiles</key><array><string>fox</string></array><key>UIPrerenderedIcon</key><false/></dict>
+			<key>panda</key>
+			<dict><key>CFBundleIconFiles</key><array><string>panda</string></array><key>UIPrerenderedIcon</key><false/></dict>
+			<key>rocket</key>
+			<dict><key>CFBundleIconFiles</key><array><string>rocket</string></array><key>UIPrerenderedIcon</key><false/></dict>
 		</dict>
 	</dict>
-	<!-- dynamic_app_icon:inject:end -->
 </dict>
 </plist>
