@@ -1,3 +1,7 @@
+## 0.0.7
+
+* Updated demo graphic to visually reflect the core functionality of the plugin.
+
 ## 0.0.6
 
 * Changed demo image link to an absolute GitHub raw URL to guarantee cross-platform rendering compatibility.
