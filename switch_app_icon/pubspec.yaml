@@ -1,6 +1,6 @@
 name: switch_app_icon
 description: A production-ready Flutter plugin to dynamically switch the application launcher icon at runtime.
-version: 0.0.4
+version: 0.0.5
 homepage: https://github.com/saikrishna/switch_app_icon
 
 environment:
