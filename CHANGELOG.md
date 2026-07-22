@@ -1,3 +1,7 @@
+## 0.0.4
+
+* Fixed missing image rendering issue on pub.dev by moving the demo image out of the `.pubignore` path and into the package root.
+
 ## 0.0.3
 
 * Replaced missing demo GIF placeholder with a high-quality static promotional graphic in `README.md`.
