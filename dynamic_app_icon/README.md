@@ -71,7 +71,7 @@ flutter:
 Run the automated CLI generation pipeline. This utility validates files, handles sizes and transparencies, generates assets, compiles mipmaps, and configures platform manifests with zero configuration:
 
 ```bash
-dart run dynamic_app_icon_cli:generate
+dart run dynamic_app_icon:generate
 ```
 
 ### What does the CLI automate?

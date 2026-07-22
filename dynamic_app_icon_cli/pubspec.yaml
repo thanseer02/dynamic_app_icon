@@ -1,5 +1,6 @@
 name: dynamic_app_icon_cli
 description: Command-line interface executable script for dynamic_app_icon packages.
+publish_to: none
 version: 0.0.1
 environment:
   sdk: '>=3.3.1 <4.0.0'

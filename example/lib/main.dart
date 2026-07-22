@@ -22,8 +22,8 @@ class DynamicAppIconDemo extends StatelessWidget {
           brightness: Brightness.light,
           primary: Colors.deepPurple,
           secondary: Colors.pinkAccent,
-          background: const Color(0xFFF8FAFC), // Slate 50
-          surface: Colors.white,
+          surface: const Color(0xFFF8FAFC), // Slate 50
+
         ),
         textTheme: const TextTheme(
           titleLarge: TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5),
@@ -37,8 +37,8 @@ class DynamicAppIconDemo extends StatelessWidget {
           brightness: Brightness.dark,
           primary: Colors.deepPurpleAccent,
           secondary: Colors.pinkAccent,
-          background: const Color(0xFF0F172A), // Slate 900
-          surface: const Color(0xFF1E293B), // Slate 800
+          surface: const Color(0xFF0F172A), // Slate 900
+
         ),
         textTheme: const TextTheme(
           titleLarge: TextStyle(fontWeight: FontWeight.bold, letterSpacing: -0.5),
@@ -202,7 +202,7 @@ class _IconStudioScreenState extends State<IconStudioScreen> with SingleTickerPr
     final isDesktop = MediaQuery.of(context).size.width > 768;
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: const Text('Dynamic App Icon Demo'),
         centerTitle: true,
@@ -255,13 +255,15 @@ class _IconStudioScreenState extends State<IconStudioScreen> with SingleTickerPr
           flex: 4,
           child: Padding(
             padding: const EdgeInsets.all(32.0),
-            child: Column(
+            child: SingleChildScrollView(
+              child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _buildActiveIconPreview(colorScheme),
                 const SizedBox(height: 48),
                 _buildControlPanel(colorScheme),
               ],
+              ),
             ),
           ),
         ),
@@ -300,12 +302,12 @@ class _IconStudioScreenState extends State<IconStudioScreen> with SingleTickerPr
               borderRadius: BorderRadius.circular(40),
               boxShadow: [
                 BoxShadow(
-                  color: colorScheme.primary.withOpacity(0.15),
+                  color: colorScheme.primary.withValues(alpha: 0.15),
                   blurRadius: 30,
                   offset: const Offset(0, 15),
                 ),
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 )
@@ -317,7 +319,7 @@ class _IconStudioScreenState extends State<IconStudioScreen> with SingleTickerPr
                 _getAssetPath(_currentIcon),
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => 
-                  Icon(Icons.apps, size: 80, color: colorScheme.primary.withOpacity(0.5)),
+                  Icon(Icons.apps, size: 80, color: colorScheme.primary.withValues(alpha: 0.5)),
               ),
             ),
           ),
@@ -327,14 +329,14 @@ class _IconStudioScreenState extends State<IconStudioScreen> with SingleTickerPr
           _getReadableName(_currentIcon),
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w800,
-            color: colorScheme.onBackground,
+            color: colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
-            color: _isSupported ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+            color: _isSupported ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Row(
@@ -346,12 +348,14 @@ class _IconStudioScreenState extends State<IconStudioScreen> with SingleTickerPr
                 color: _isSupported ? Colors.green : Colors.red,
               ),
               const SizedBox(width: 6),
-              Text(
-                _isSupported ? 'Supported on this device' : 'Unsupported on this device',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: _isSupported ? Colors.green : Colors.red,
+              Flexible(
+                child: Text(
+                  _isSupported ? 'Supported on this device' : 'Unsupported on this device',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: _isSupported ? Colors.green : Colors.red,
+                  ),
                 ),
               ),
             ],
@@ -398,19 +402,19 @@ class _IconStudioScreenState extends State<IconStudioScreen> with SingleTickerPr
                 duration: const Duration(milliseconds: 200),
                 decoration: BoxDecoration(
                   color: isSelected 
-                      ? colorScheme.primary.withOpacity(0.1) 
+                      ? colorScheme.primary.withValues(alpha: 0.1) 
                       : colorScheme.surface,
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
                     color: isSelected 
                         ? colorScheme.primary 
-                        : (isActive ? colorScheme.primary.withOpacity(0.3) : Colors.transparent),
+                        : (isActive ? colorScheme.primary.withValues(alpha: 0.3) : Colors.transparent),
                     width: isSelected ? 2 : 1,
                   ),
                   boxShadow: [
                     if (!isSelected)
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
+                        color: Colors.black.withValues(alpha: 0.04),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -427,7 +431,7 @@ class _IconStudioScreenState extends State<IconStudioScreen> with SingleTickerPr
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
+                                color: Colors.black.withValues(alpha: 0.1),
                                 blurRadius: 8,
                                 offset: const Offset(0, 3),
                               )
