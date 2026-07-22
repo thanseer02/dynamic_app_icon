@@ -2,7 +2,7 @@
 
 A production-grade, highly reliable Flutter plugin to dynamically switch the application launcher icon at runtime using predefined assets bundled with the app.
 
-![Dynamic App Icon Demo](demo.png)
+![Dynamic App Icon Demo](https://github.com/thanseer02/dynamic_app_icon/blob/main/demo.png?raw=true)
 <p align="center">
   <em>High-quality developer graphic demonstrating dynamic UI icon switching.</em>
 </p>

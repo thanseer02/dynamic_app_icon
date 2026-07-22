@@ -1,3 +1,7 @@
+## 0.0.5
+
+* Converted HTML `<img src="demo.png">` tag to standard Markdown `![alt](demo.png)` syntax to fix pub.dev Markdown rendering restrictions.
+
 ## 0.0.4
 
 * Fixed missing image rendering issue on pub.dev by moving the demo image out of the `.pubignore` path and into the package root.
