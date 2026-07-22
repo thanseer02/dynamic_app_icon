@@ -1,3 +1,8 @@
+## 0.0.2
+
+* Fixed minor display issues in example test suite.
+* Automated documentation generation and placeholder configurations.
+
 ## 0.0.1
 
 * Initial release of `dynamic_app_icon`.
