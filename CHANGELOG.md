@@ -1,3 +1,7 @@
+## 0.0.6
+
+* Changed demo image link to an absolute GitHub raw URL to guarantee cross-platform rendering compatibility.
+
 ## 0.0.5
 
 * Converted HTML `<img src="demo.png">` tag to standard Markdown `![alt](demo.png)` syntax to fix pub.dev Markdown rendering restrictions.
