@@ -7,12 +7,12 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:dynamic_app_icon_example/main.dart';
+import 'package:switch_app_icon_example/main.dart';
 
 void main() {
   testWidgets('Verify App Launch', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const DynamicAppIconDemo());
+    await tester.pumpWidget(const SwitchAppIconDemo());
 
     // Verify that the title text is rendered.
     expect(find.text('Dynamic App Icon Demo'), findsOneWidget);

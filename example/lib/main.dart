@@ -1,13 +1,13 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:dynamic_app_icon/dynamic_app_icon.dart';
+import 'package:switch_app_icon/switch_app_icon.dart';
 
 void main() {
-  runApp(const DynamicAppIconDemo());
+  runApp(const SwitchAppIconDemo());
 }
 
-class DynamicAppIconDemo extends StatelessWidget {
-  const DynamicAppIconDemo({super.key});
+class SwitchAppIconDemo extends StatelessWidget {
+  const SwitchAppIconDemo({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -101,11 +101,11 @@ class _IconStudioScreenState extends State<IconStudioScreen> with SingleTickerPr
   Future<void> _checkPluginState() async {
     setState(() => _isLoading = true);
     try {
-      final isSupported = await DynamicAppIcon.isSupported();
+      final isSupported = await SwitchAppIcon.isSupported();
       String currentIcon = 'default';
       
       if (isSupported) {
-        final activeIcon = await DynamicAppIcon.current();
+        final activeIcon = await SwitchAppIcon.current();
         currentIcon = activeIcon ?? 'default';
       }
       
@@ -130,12 +130,12 @@ class _IconStudioScreenState extends State<IconStudioScreen> with SingleTickerPr
     setState(() => _isLoading = true);
     try {
       if (iconName == 'default') {
-        await DynamicAppIcon.reset();
+        await SwitchAppIcon.reset();
       } else {
-        await DynamicAppIcon.change(iconName);
+        await SwitchAppIcon.change(iconName);
       }
       
-      final activeIcon = await DynamicAppIcon.current();
+      final activeIcon = await SwitchAppIcon.current();
       setState(() {
         _currentIcon = activeIcon ?? 'default';
         _selectedIcon = _currentIcon;

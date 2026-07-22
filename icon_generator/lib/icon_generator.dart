@@ -126,9 +126,9 @@ class AppIconValidator {
     final plistFile = File(p.join(currentDir, 'ios', 'Runner', 'Info.plist'));
     if (plistFile.existsSync()) {
       final content = plistFile.readAsStringSync();
-      final legacyMatch = RegExp(r'<!--\s*dynamic_app_icon:inject:start\s*-->.*?<!--\s*dynamic_app_icon:inject:end\s*-->', dotAll: true);
+      final legacyMatch = RegExp(r'<!--\s*switch_app_icon:inject:start\s*-->.*?<!--\s*switch_app_icon:inject:end\s*-->', dotAll: true);
       if (!legacyMatch.hasMatch(content)) {
-        warnings.add('Info.plist dynamic_app_icon settings block is missing or corrupt.');
+        warnings.add('Info.plist switch_app_icon settings block is missing or corrupt.');
         autoFixes.add('Automatically re-inject alternate icon blocks into Info.plist.');
       }
     }
@@ -256,12 +256,12 @@ class IconResizingEngine {
       final mainActivityName = match?.group(1) ?? '.MainActivity';
 
       // Remove any previous dynamic injections
-      final injectRegex = RegExp(r'<!--\s*dynamic_app_icon:inject:start\s*-->.*?<!--\s*dynamic_app_icon:inject:end\s*-->', dotAll: true);
+      final injectRegex = RegExp(r'<!--\s*switch_app_icon:inject:start\s*-->.*?<!--\s*switch_app_icon:inject:end\s*-->', dotAll: true);
       manifestContent = manifestContent.replaceAll(injectRegex, '');
 
       // Generate alternate activity-alias entries
       final buffer = StringBuffer();
-      buffer.writeln('        <!-- dynamic_app_icon:inject:start -->');
+      buffer.writeln('        <!-- switch_app_icon:inject:start -->');
       for (final name in validNames) {
         if (name == 'default') continue; 
         buffer.writeln('        <activity-alias');
@@ -276,7 +276,7 @@ class IconResizingEngine {
         buffer.writeln('            </intent-filter>');
         buffer.writeln('        </activity-alias>');
       }
-      buffer.write('        <!-- dynamic_app_icon:inject:end -->');
+      buffer.write('        <!-- switch_app_icon:inject:end -->');
 
       final closingAppIndex = manifestContent.indexOf('</application>');
       if (closingAppIndex == -1) {
@@ -333,17 +333,17 @@ class IconResizingEngine {
       var plistContent = plistFile.readAsStringSync();
 
       // Remove any previous dynamic injections
-      final injectRegex = RegExp(r'<!--\s*dynamic_app_icon:inject\s*-->.*?<!--\s*dynamic_app_icon:inject:end\s*-->', dotAll: true);
+      final injectRegex = RegExp(r'<!--\s*switch_app_icon:inject\s*-->.*?<!--\s*switch_app_icon:inject:end\s*-->', dotAll: true);
       plistContent = plistContent.replaceAll(injectRegex, '');
 
       // Backup regex to clean legacy format
-      final legacyRegex = RegExp(r'<!--\s*dynamic_app_icon:inject:start\s*-->.*?<!--\s*dynamic_app_icon:inject:end\s*-->', dotAll: true);
+      final legacyRegex = RegExp(r'<!--\s*switch_app_icon:inject:start\s*-->.*?<!--\s*switch_app_icon:inject:end\s*-->', dotAll: true);
       plistContent = plistContent.replaceAll(legacyRegex, '');
 
       final alternateNames = validNames.where((n) => n != 'default').toList();
 
       final buffer = StringBuffer();
-      buffer.writeln('	<!-- dynamic_app_icon:inject:start -->');
+      buffer.writeln('	<!-- switch_app_icon:inject:start -->');
       buffer.writeln('	<key>CFBundleIcons</key>');
       buffer.writeln('	<dict>');
       buffer.writeln('		<key>CFBundleAlternateIcons</key>');
@@ -381,7 +381,7 @@ class IconResizingEngine {
       }
       buffer.writeln('		</dict>');
       buffer.writeln('	</dict>');
-      buffer.write('	<!-- dynamic_app_icon:inject:end -->');
+      buffer.write('	<!-- switch_app_icon:inject:end -->');
 
       final match = RegExp(r'</dict>\s*</plist>').allMatches(plistContent);
       final closingPlistIndex = match.isNotEmpty ? match.last.start : -1;

@@ -1,6 +1,6 @@
-# dynamic_app_icon_example
+# switch_app_icon_example
 
-Demonstrates how to use the dynamic_app_icon plugin.
+Demonstrates how to use the switch_app_icon plugin.
 
 ## Getting Started
 

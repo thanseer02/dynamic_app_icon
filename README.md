@@ -1,4 +1,4 @@
-# dynamic_app_icon
+# switch_app_icon
 
 A production-grade, highly reliable Flutter plugin to dynamically switch the application launcher icon at runtime using predefined assets bundled with the app.
 
@@ -23,13 +23,13 @@ A production-grade, highly reliable Flutter plugin to dynamically switch the app
 
 ## Installation
 
-Add of `dynamic_app_icon` package under your project's `pubspec.yaml` dependencies:
+Add of `switch_app_icon` package under your project's `pubspec.yaml` dependencies:
 
 ```yaml
 dependencies:
   flutter:
     sdk: flutter
-  dynamic_app_icon: ^0.0.1  # Or specify path dependency locally
+  switch_app_icon: ^0.0.1  # Or specify path dependency locally
 ```
 
 Ensure you run:
@@ -71,7 +71,7 @@ flutter:
 Run the automated CLI generation pipeline. This utility validates files, handles sizes and transparencies, generates assets, compiles mipmaps, and configures platform manifests with zero configuration:
 
 ```bash
-dart run dynamic_app_icon_cli:generate
+dart run switch_app_icon_cli:generate
 ```
 
 ### What does the CLI automate?
@@ -82,7 +82,7 @@ dart run dynamic_app_icon_cli:generate
    - **Transparent PNGs**: Treated as Foreground. The Background is generated as a solid opaque white canvas.
    - **Opaque (Flat) PNGs**: Padds the logo to 66% (safe zone) for the Foreground, and uses the raw flat canvas as the Background.
 3. Generates XML wrappers under `mipmap-anydpi-v26/ic_launcher_{icon}.xml`.
-4. Injects activity-alias items to `AndroidManifest.xml` inside `<!-- dynamic_app_icon:inject:start -->` comments automatically.
+4. Injects activity-alias items to `AndroidManifest.xml` inside `<!-- switch_app_icon:inject:start -->` comments automatically.
 
 #### **iOS**
 1. Generates 5 distinct alternate sizes: `@2x` (120x120), `@3x` (180x180), iPad `@1x` (76x76), iPad `@2x` (152x152), and iPad Pro `@2x` (167x167).
@@ -138,13 +138,13 @@ In `ios/Runner/Info.plist`, declare alternate icons inside the `CFBundleIcons` k
 
 ## Dart API Usage Examples
 
-Exposes a clean client static API representing `DynamicAppIcon`.
+Exposes a clean client static API representing `SwitchAppIcon`.
 
 ### 1. Check Platform Support
 Alternate launcher changing requires Android 8.0+ or iOS 10.3+.
 
 ```dart
-bool isSupported = await DynamicAppIcon.isSupported();
+bool isSupported = await SwitchAppIcon.isSupported();
 if (isSupported) {
   print("Device supports runtime launcher switching!");
 }
@@ -154,7 +154,7 @@ if (isSupported) {
 Gets a list of all configured alternate icon suffix names (excluding `default`).
 
 ```dart
-List<String> list = await DynamicAppIcon.availableIcons();
+List<String> list = await SwitchAppIcon.availableIcons();
 print("Configured alternates: $list"); // ['dark_icon', 'festive_gold']
 ```
 
@@ -162,7 +162,7 @@ print("Configured alternates: $list"); // ['dark_icon', 'festive_gold']
 Returns the active icon name. If default, it returns `'default'`.
 
 ```dart
-String active = await DynamicAppIcon.current();
+String active = await SwitchAppIcon.current();
 print("Current active icon: $active");
 ```
 
@@ -171,9 +171,9 @@ Dynamically swaps to one of the configured alternate names.
 
 ```dart
 try {
-  await DynamicAppIcon.change('dark_icon');
+  await SwitchAppIcon.change('dark_icon');
   print("Icon updated successfully");
-} on DynamicAppIconException catch (e) {
+} on SwitchAppIconException catch (e) {
   print("Failed to change icon: ${e.message}");
 }
 ```
@@ -183,9 +183,9 @@ Re-enables the primary `.MainActivity` component and reverts change.
 
 ```dart
 try {
-  await DynamicAppIcon.reset();
+  await SwitchAppIcon.reset();
   print("Reverted to base default launcher icon.");
-} on DynamicAppIconException catch (e) {
+} on SwitchAppIconException catch (e) {
   print("Reset failed: ${e.message}");
 }
 ```
@@ -194,7 +194,7 @@ try {
 
 ## Example Application 📱
 
-The `dynamic_app_icon` package includes a fully functional Example Application to demonstrate dynamic launcher icon switching in action. It is intentionally simple so you can quickly understand how to integrate the package into your own projects.
+The `switch_app_icon` package includes a fully functional Example Application to demonstrate dynamic launcher icon switching in action. It is intentionally simple so you can quickly understand how to integrate the package into your own projects.
 
 ### Bundled Icons 🎨
 The example app comes pre-configured with six beautiful predefined launcher icons:
@@ -236,13 +236,13 @@ All launcher icons are bundled with the application and switched entirely at run
 ## Troubleshooting & FAQs
 
 ### Q: Why does the app crash or restart when I change the icon on Android?
-On Android, changing the enabled components via Package Manager kills the app process in background to rebuild launcher shortcuts. This is standard OS behavior. Ensure you save user preferences or app state before calling `DynamicAppIcon.change()`.
+On Android, changing the enabled components via Package Manager kills the app process in background to rebuild launcher shortcuts. This is standard OS behavior. Ensure you save user preferences or app state before calling `SwitchAppIcon.change()`.
 
 ### Q: Can my launcher icon draw dynamic graphics or graphs from network APIs?
 No. App alternate icons must be statically resolved and bundled into resources at compile-time. Operating systems do not permit remote asset loading of launcher icons for security reasons.
 
 ### Q: The changes are not updating on iOS!
-Ensure you ran `dart run dynamic_app_icon:generate`. If assets still display old versions, perform a clean rebuild:
+Ensure you ran `dart run switch_app_icon:generate`. If assets still display old versions, perform a clean rebuild:
 ```bash
 flutter clean && flutter run
 ```
@@ -254,4 +254,4 @@ If migrating from primitive single-purpose packages:
 1. Delete any hardcoded `<activity-alias>` elements from `AndroidManifest.xml` that could clash.
 2. Clean out old Xcode alternate icons configuration blocks from `Info.plist`.
 3. Drop your raw logo files in `assets/app_icons/` naming them clean suffix styles.
-4. Run `dart run dynamic_app_icon:generate` to finalize.
+4. Run `dart run switch_app_icon:generate` to finalize.

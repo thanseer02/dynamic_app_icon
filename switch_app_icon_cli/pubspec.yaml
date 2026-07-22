@@ -1,5 +1,5 @@
-name: dynamic_app_icon_cli
-description: Command-line interface executable script for dynamic_app_icon packages.
+name: switch_app_icon_cli
+description: Command-line interface executable script for switch_app_icon packages.
 publish_to: none
 version: 0.0.1
 environment:
@@ -9,6 +9,6 @@ dependencies:
   path: ^1.8.0
   icon_generator:
     path: ../icon_generator
-# Expose executable dynamic_app_icon_cli:generate
+# Expose executable switch_app_icon_cli:generate
 executables:
   generate:

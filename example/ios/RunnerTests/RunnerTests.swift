@@ -2,12 +2,12 @@ import Flutter
 import UIKit
 import XCTest
 
-@testable import dynamic_app_icon
+@testable import switch_app_icon
 
 class RunnerTests: XCTestCase {
 
   func testIsSupported() {
-    let plugin = DynamicAppIconPlugin()
+    let plugin = SwitchAppIconPlugin()
 
     let call = FlutterMethodCall(methodName: "isSupported", arguments: [])
 
