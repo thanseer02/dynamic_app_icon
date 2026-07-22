@@ -1,3 +1,7 @@
+## 0.0.3
+
+* Replaced missing demo GIF placeholder with a high-quality static promotional graphic in `README.md`.
+
 ## 0.0.2
 
 * Fixed minor display issues in example test suite.
