@@ -1,3 +1,7 @@
+## 0.0.8
+
+* Replaced `github.com` redirect URL with `raw.githubusercontent.com` direct URL to ensure strict Markdown renderers parse the demo image correctly without HTTP 302 redirects.
+
 ## 0.0.7
 
 * Updated demo graphic to visually reflect the core functionality of the plugin.
